@@ -47,9 +47,9 @@
 # main()
 
 
-# list = [0, 1, 2, 3, 4, 5]
-# i = 0
+list = [0, 1, 2, 3, 4, 5]
+i = 0
 
-# while i < len(list):
-#     print("meow")
-#     i += 1
+while i < len(list):
+    print("meow")
+    i += 1
