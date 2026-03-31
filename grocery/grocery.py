@@ -14,4 +14,3 @@ while True:
 
 for item in sorted(grocery):
     print(grocery[item], item)
-
