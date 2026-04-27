@@ -1,0 +1,9 @@
+{
+  "users": {
+    "kakha": {
+      "password": "kaka1234",
+      "balance": 0.0,
+      "transactions": []
+    }
+  }
+}
