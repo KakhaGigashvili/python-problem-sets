@@ -1,3 +1,4 @@
+from datetime import datetime
 import getpass
 import json 
 import os 
@@ -11,11 +12,13 @@ def load_db():
         return json.load(f)
     
 
+
 def save_db(db):
     with open(DB_FILE, "w") as f:
         json.dump(db, f, indent=2)
 
-        
+
+
 def register():
     username = input("Choose a username: ").strip()
     if not username:
@@ -37,6 +40,8 @@ def register():
     save_db(db)
     print(f"Account created for '{username}'")
 
+
+
 def login():
     username = input("Username: ").strip()
     password = getpass.getpass("password: ")
@@ -47,6 +52,65 @@ def login():
         return None
     print(f"Welcome back, {username}")
     return username
+
+def show_balance(username):
+    db = load_db()
+    print(f"Current balance: ${db["users"][username]["balance"]:.2f}")
+    
+def read_amount(prompt):
+    raw = input(prompt).strip()
+    try:
+        amount = float(raw)
+    except ValueError:
+        print("That's not valid number.")
+        return None
+    if amount <= 0:
+        print("Amount must be greater thant zero")
+        return None
+    return round(amount, 2)
+
+
+def add_transaction(user, entry):
+    user["transactions"].append(
+    {
+        **entry,
+        "at": datetime.now().isoformat(timespec="seconds")
+    })
+
+def deposit(username):
+    amount = read_amount("Amount to deposut: $")
+    if amount is None:
+        return
+    db = load_db()
+    user = db["users"][username]
+    user["balance"] += amount
+    add_transaction(
+        user, 
+        {
+            "type": "deposit",
+            "amount": amount,
+        })
+    save_db(db)
+    print(f"Deposited ${amount:.2f}. New balance: ${user["balance"]}")
+
+def user_menu(username):
+    while True:
+        print(f"\n --- loggined in as {username} ---")
+        print("1. Check balance")
+        print("2. Deposit")
+        print("3. Logout")
+        choice = input("Choose an option: ").strip()
+        if choice == "1":
+            show_balance(username)
+        elif choice == "2":
+            deposit(username)
+        elif choice == "3":
+            print("Logged out.")
+            return
+        else:
+            print("Invalid choice.")
+
+
 
 def main():
     while True:
@@ -60,7 +124,7 @@ def main():
         elif choice == "2":
             user = login()
             if user:
-                print(f"(banking menu for '{user}' comming in the next lecture)")
+                user_menu(user)
         elif choice == "3":
             print("Goodbye!")
             return

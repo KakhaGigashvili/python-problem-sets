@@ -1,9 +1,20 @@
 {
   "users": {
-    "kakha": {
-      "password": "kaka1234",
-      "balance": 0.0,
-      "transactions": []
+    "alice": {
+      "password": "test1234",
+      "balance": 1500.0,
+      "transactions": [
+        {
+          "type": "deposit",
+          "amount": 1000.0,
+          "at": "2026-04-30T17:50:16"
+        },
+        {
+          "type": "deposit",
+          "amount": 500.0,
+          "at": "2026-04-30T17:51:26"
+        }
+      ]
     }
   }
 }
