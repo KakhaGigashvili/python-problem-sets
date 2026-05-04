@@ -2,7 +2,7 @@
   "users": {
     "alice": {
       "password": "test1234",
-      "balance": 1500.0,
+      "balance": 700.0,
       "transactions": [
         {
           "type": "deposit",
@@ -13,6 +13,39 @@
           "type": "deposit",
           "amount": 500.0,
           "at": "2026-04-30T17:51:26"
+        },
+        {
+          "type": "withraw",
+          "amount": 500.0,
+          "at": "2026-05-04T16:34:53"
+        },
+        {
+          "type": "withraw",
+          "amount": 1000.0,
+          "at": "2026-05-04T16:35:29"
+        },
+        {
+          "type": "deposit",
+          "amount": 1000.0,
+          "at": "2026-05-04T16:35:37"
+        },
+        {
+          "type": "transfer_out",
+          "amount": 300.0,
+          "to": "bob",
+          "at": "2026-05-04T17:17:28"
+        }
+      ]
+    },
+    "bob": {
+      "password": "test1234",
+      "balance": 300.0,
+      "transactions": [
+        {
+          "type": "transfer_in",
+          "amount": 300.0,
+          "from": "alice",
+          "at": "2026-05-04T17:17:28"
         }
       ]
     }
