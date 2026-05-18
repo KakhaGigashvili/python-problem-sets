@@ -12,36 +12,43 @@ class User():
 
     def greet_user(self):
 
-        massage = f"Hello {self.first_name}"
+        message = f"Hello {self.first_name}"
 
-        print(massage)
+        print(message)
+
 
 class Privileges():
-    def __init__(self, privileges =[]):
+
+    def __init__(self, privileges=[]):
         self.privileges = privileges
 
     def show_privileges(self):
+
         if self.privileges:
             for privilege in self.privileges:
                 print(privilege)
         else:
             print("This admin currently has no special privileges.")
-        
 
 
 class Admin(User):
-    def __init__(self, first_name, last_name, privileges):
+
+    def __init__(self, first_name, last_name):
         super().__init__(first_name, last_name)
 
-        self.privileges = privileges
+        self.privileges = Privileges()
 
-    def show_privileges(self):
-        for admin in self.privileges:
-            print(f"Admin can {admin}")
 
-privileges =["can add post", "can delete post", "can ban user"]
+privileges = [
+    "can add post",
+    "can delete post",
+    "can ban user"
+]
 
-user_is_admin = Admin("nika", "lukadze", privileges)
+user_is_admin = Admin("nika", "lukadze")
+
+user_is_admin.privileges.privileges = privileges
 
 user_is_admin.describe_user()
-user_is_admin.show_privileges()
+
+user_is_admin.privileges.show_privileges()
