@@ -52,6 +52,10 @@ class Battery():
 
         massage = f"This car can go {self.range}"
         print(massage)
+
+    def upgrade_battery(self):
+        if self.battery_size != 85:
+            self.battery_size = 85
         
 
 class ElectricCar(Car):
@@ -72,7 +76,7 @@ class ElectricCar(Car):
 
 
 my_tesla = ElectricCar("tesla", "model s", 2024)
-my_tesla.battery.battery_size = 85
+my_tesla.battery.upgrade_battery()
 my_tesla.battery.describe_battery()
 my_tesla.battery.get_range()
 
