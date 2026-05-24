@@ -1,0 +1,13 @@
+{
+    "user": {
+        "alice": "testpass123",
+        "balance": 100.0,
+        "transactions":[
+            {
+                "type": "transfer",
+                "amount": 100.0,
+                "at": ""
+            }
+        ]
+    }
+}
