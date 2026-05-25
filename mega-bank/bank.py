@@ -1,5 +1,7 @@
 from datetime import datetime
-
+from getpass import getpass
+import os
+import json
 
 class Transacrions: 
     def __init__(self, type, amount, to=None, from_=None, at=None):
@@ -75,8 +77,95 @@ class Account:
             ]
         )
     
+
+class Bank:
+    DB_FILE = "db.json"
+
+    def __init__(self, db_file = None):
+        self.db_file = db_file or self.DB_FILE
+        self.accounts = {}
+
+    def load(self): 
+        if not os.path.exists(self.db_file):
+            self.accounts = {}
+            return
+        
+        with open(self.db_file, "r") as f:
+            data = json.load(f)
+
+        self.accounts = {
+            username: Account.from_dict(username, user_data)
+            for username, user_data in data.get("users", {}).items()
+        }
+
+    def save(self):
+        data = {"users": {a.username: a.to_dict() for a in self.accounts.values()}}
+
+        with open(self.db_file, "w") as f:
+            json.dump(data, f, indent=2)
+
+    def register(self, username, password):
+        if username in  self.accounts:
+            raise ValueError("That username is already taken.")
+        
+        account = Account(username, password)
+        self.accounts[username] = account
+        self.save()
+        return account
+    
+    def authenticate(self, username, password):
+        account = self.accounts.get(username)
+        if account is None or account.password != password:
+            return None
+        return account
+    
+
+class BankApp:
+    def __init__(self):
+        self.bank = Bank()
+        self.current_user = None
+
+    def run(self):
+        while True:
+            print("\n=== Mega Bank ===")
+            print("1. Register")
+            print("2. Quit")
+
+            choice = input("Choose an option: ").strip()
+            if choice == "1":
+                self._register()
+            elif choice == "2":
+                print("Goodbye!")
+                return
+            else:
+                print("ivalid choice.")
+
+    def _register(self):
+        username = input("Choose a username: ").strip()
+        if not username:
+            print("Username cannot be empty.")
+            return
+        
+        password = getpass("Choose a password: ")
+        if not password:
+            print("Password cannot be empty.")
+            return
+        try:
+            self.bank.register(username, password)
+        except ValueError as e:
+            print(e)
+            return
+        print(f"Account created for '{username}.'")
+
+    def _login(self):
+        username = input("Username: ").strip()
+        password = getpass("Password: ").strip()
+        account = self.bank.authenticate(username, password)
+        if account in None:
+            print("Ivalid username or password")
+        self.current_user = account
+        print(f"welcome back, {account.username}")
+
+
 if __name__ == "__main__":
-    alice = Account("alice", "testpass123")
-    alice.deposit(100.0)
-    alice.withdraw(30.0)
-    print(alice.to_dict())
+    BankApp().run()
