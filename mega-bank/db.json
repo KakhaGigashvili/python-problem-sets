@@ -1,9 +1,50 @@
 {
   "users": {
     "alice": {
-      "password": "testpass123",
+      "password": "tetpass123",
       "balance": 0.0,
       "transactions": []
+    },
+    "bob": {
+      "password": "123",
+      "balance": 150.0,
+      "transactions": [
+        {
+          "type": "deposit",
+          "amount": 100.0,
+          "at": "2026-05-28T17:16:40"
+        },
+        {
+          "type": "withdraw",
+          "amount": 50.0,
+          "at": "2026-05-28T17:16:45"
+        },
+        {
+          "type": "deposit",
+          "amount": 50.0,
+          "at": "2026-05-28T17:18:13"
+        },
+        {
+          "type": "withdraw",
+          "amount": 50.0,
+          "at": "2026-05-28T17:18:28"
+        },
+        {
+          "type": "withdraw",
+          "amount": 50.0,
+          "at": "2026-05-28T17:18:33"
+        },
+        {
+          "type": "deposit",
+          "amount": 100.0,
+          "at": "2026-05-28T17:30:22"
+        },
+        {
+          "type": "deposit",
+          "amount": 50.0,
+          "at": "2026-05-28T17:30:53"
+        }
+      ]
     }
   }
 }

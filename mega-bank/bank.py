@@ -3,7 +3,7 @@ from getpass import getpass
 import os
 import json
 
-class Transacrions: 
+class Transactions:
     def __init__(self, type, amount, to=None, from_=None, at=None):
         self.type = type
         self.amount = amount
@@ -37,22 +37,24 @@ class Account:
         self.transactions = transactions if transactions is not None else []
 
     def deposit(self, amount):
+        if amount < 0:
+            return
         self.balance += amount
-        self.transactions.append(Transacrions("deposit", amount))
+        self.transactions.append(Transactions("deposit", amount))
 
     def withdraw(self, amount): 
         if amount > self.balance:
             raise ValueError("Insufficient funds.")
         self.balance -= amount
-        self.transactions.append(Transacrions("withdraw", amount))
+        self.transactions.append(Transactions("withdraw", amount))
 
     def record_transfer_out(self, amount, to):
         self.balance -= amount
-        self.transactions.append(Transacrions("transfer_out", amount, to=to))
+        self.transactions.append(Transactions("transfer_out", amount, to=to))
 
     def record_transfer_in(self, amount, from_):
         self.balance += amount
-        self.transactions.append(Transacrions(
+        self.transactions.append(Transactions(
             "transfer_in", 
             amount, 
             from_ = from_,
@@ -72,8 +74,8 @@ class Account:
             username = username,
             password = data["password"],
             balance = data["balance"],
-            Transacrions = [
-                Transacrions.from_dict(t) for t in data.get("transactions", [])
+            transactions = [
+                Transactions.from_dict(t) for t in data.get("transactions", [])
             ]
         )
     
@@ -123,18 +125,22 @@ class Bank:
 class BankApp:
     def __init__(self):
         self.bank = Bank()
+        self.bank.load()
         self.current_user = None
 
     def run(self):
         while True:
             print("\n=== Mega Bank ===")
             print("1. Register")
-            print("2. Quit")
+            print("2. Login")
+            print("3. Quit")
 
             choice = input("Choose an option: ").strip()
             if choice == "1":
                 self._register()
             elif choice == "2":
+                self._login()
+            elif choice == "3":
                 print("Goodbye!")
                 return
             else:
@@ -161,10 +167,81 @@ class BankApp:
         username = input("Username: ").strip()
         password = getpass("Password: ").strip()
         account = self.bank.authenticate(username, password)
-        if account in None:
+        if account is None:
             print("Ivalid username or password")
+            return
         self.current_user = account
         print(f"welcome back, {account.username}")
+        self._user_menu()
+
+    def _user_menu(self):
+        while True:
+            user = self.current_user
+            if user is None:
+                return
+            print(f"\n --- Logged in as {user.username} ---")
+            print("1. Check balance")
+            print("2. Deposit")
+            print("3. Withdraw")
+            print("4. Logout")
+            choice = input("Choice an option: ").strip()
+            if choice == "1":
+                self._show_balance()
+            elif choice == "2":
+                self._deposit()
+            elif choice == "3":
+                self._withdraw()
+            elif choice == "4":
+                print("Logged out")
+                self.current_user = None
+                return
+            else:
+                print("Invalid choice")
+
+    def _show_balance(self):
+        user = self.current_user
+        print(f"Current balance: ${user.balance:.2f}")
+
+    def _read_amount(self, prompt):
+        raw = input(prompt).strip()
+        try:
+            amount = float(raw)
+        except ValueError:
+            print("That's not valid number.")
+            return None
+        return round(amount, 2)
+
+    def _deposit(self): 
+        amount = self._read_amount("Amount to deposit: $")
+        user = self.current_user
+        if amount is None:
+            return
+        if amount < 0:
+            print("Depoist cannot be negativ number")
+            return
+        if user is None:
+            return
+
+        self.current_user.deposit(amount)
+        self.bank.save()
+        print(f"Deposited ${amount:.2f}. New balance: ${user.balance:.2f}")
+
+
+    def _withdraw(self):
+        user = self.current_user
+        amount = self._read_amount("Amount to withdraw: $")
+        if user is None:
+            return
+        if amount is None:
+            return
+        try:
+            self.current_user.withdraw(amount)
+        except ValueError as e:
+            print(e)
+            return
+        self.bank.save()
+        print(f"Withdrew ${amount:.2f}. New balance ${user.balance:.2f}")
+
 
 
 if __name__ == "__main__":
